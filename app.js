@@ -1,6 +1,6 @@
 const express = require("express");
 const dotenv = require("dotenv");
-const expensesRoute = require("./routes/expenses");
+const candidatesRoute = require("./routes/candidates");
 var cors = require("cors");
 
 dotenv.config();
@@ -10,7 +10,11 @@ const app = express();
 
 app.use(cors());
 
-app.use("/api/expenses", expensesRoute);
+app.get("/", function (req, res) {
+  res.send("Database Wiki");
+});
+
+app.use("/api/candidates", candidatesRoute);
 
 app.listen(port, function () {
   console.log(`Servidor en el puerto ${port} `);

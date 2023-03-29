@@ -6,7 +6,8 @@ const router = express.Router();
 router.get("/", async (req, res) => {
   await sql.connect(process.env.DB_CONNECTION);
 
-  const result = await sql.query`select * from candidates`;
+  const result =
+    await sql.query`SELECT Id_Candidates AS Id, Name_Candidates AS Name FROM Candidates`;
 
   res.json(result.recordset);
 });
