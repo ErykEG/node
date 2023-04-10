@@ -5,6 +5,13 @@ const projectRoute = require("./routes/project");
 const projectUser = require("./routes/user");
 const projectMatches = require("./routes/match");
 const projectDem = require("./routes/demand");
+const projectProf = require("./routes/profile_project");
+const candStackRoute = require("./routes/candstack");
+const stackRoute = require("./routes/stack");
+const dStackRoute = require("./routes/dstack");
+const projDemRoute = require("./routes/prodem");
+const recruitRoute = require("./routes/recruit");
+const proRecRoute = require("./routes/project_rec");
 var cors = require("cors");
 
 dotenv.config();
@@ -27,6 +34,20 @@ app.use("/api/user", projectUser);
 app.use("/api/matches", projectMatches);
 
 app.use("/api/demand", projectDem);
+
+app.use("/api/profile_project", projectProf);
+
+app.use("/api/cs", candStackRoute);
+
+app.use("/api/stack", stackRoute);
+
+app.use("/api/demand-stack", dStackRoute);
+
+app.use("/api/proj-dem", projDemRoute);
+
+app.use("/api/recruiters", recruitRoute);
+
+app.use("/api/project-recruits", proRecRoute);
 
 app.listen(port, function () {
   console.log(`Servidor en el puerto ${port} `);
