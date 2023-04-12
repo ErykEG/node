@@ -1,23 +1,34 @@
-const express = require("express");
-const sql = require("mssql");
+router.post("/add", async (req, res) => {
+  try {
+    const pool = await sql.connect(process.env.DB_CONNECTION);
 
-const router = express.Router();
+    const result = await pool
+      .request()
+      .input("title", sql.VarChar, req.body.title)
+      .query(
+        "INSERT INTO Profiles (title) VALUES (@title)"
+      );
 
-router.get("/", async (req, res) => {
-  await sql.connect(process.env.DB_CONNECTION);
-
-  const result =
-    await sql.query`SELECT Id_Matches AS Id FROM Matches`;
-
-  res.json(result.recordset);
+    res.send("Expense added successfully.");
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Server error");
+  }
 });
+router.post("/add", async (req, res) => {
+  try {
+    const pool = await sql.connect(process.env.DB_CONNECTION);
 
-router.get("/test", (req, res) => {
-  res.json({ test: "test" });
+    const result = await pool
+      .request()
+      .input("title", sql.VarChar, req.body.title)
+      .query(
+        "INSERT INTO Profiles (title) VALUES (@title)"
+      );
+
+    res.send("Expense added successfully.");
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Server error");
+  }
 });
-
-router.post("/test", (req, res) => {
-  res.json({ test: "test" });
-});
-
-module.exports = router;
