@@ -3,20 +3,12 @@ const sql = require("mssql");
 
 const router = express.Router();
 
-router.post("/add", async (req, res) => {
-  try {
-    const pool = await sql.connect(process.env.DB_CONNECTION);
+router.get("/:variable", async (req, res) => {
+  await sql.connect(process.env.DB_CONNECTION);
+  const myVariable = req.params.variable;
+  const result =
+    await sql.query`SELECT * FROM ${myVariable}`;
 
-    const result = await pool
-      .request()
-      .input("title", sql.VarChar, req.body.title)
-      .query(
-        "INSERT INTO Profiles (title) VALUES (@title)"
-      );
-
-    res.send("Expense added successfully.");
-  } catch (err) {
-    console.error(err);
-    res.status(500).send("Server error");
-  }
+  res.json(result.recordset);
+  // use the query to fetch data from your database
 });
