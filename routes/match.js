@@ -3,12 +3,21 @@ const sql = require("mssql");
 
 const router = express.Router();
 
-router.get("/:variable", async (req, res) => {
+router.get("/", async (req, res) => {
   await sql.connect(process.env.DB_CONNECTION);
-  const myVariable = req.params.variable;
+
   const result =
-    await sql.query`SELECT * FROM ${myVariable}`;
+    await sql.query`SELECT * FROM Demand_Stack`;
 
   res.json(result.recordset);
-  // use the query to fetch data from your database
 });
+
+router.get("/test", (req, res) => {
+  res.json({ test: "test" });
+});
+
+router.post("/test", (req, res) => {
+  res.json({ test: "test" });
+});
+
+module.exports = router;
