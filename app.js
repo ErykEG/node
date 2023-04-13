@@ -11,24 +11,6 @@ const app = express();
 app.use(cors());
 
 
-
-app.get("/", function (req, res) {
-  res.send("Database Wiki");
-});
-
-app.get('/ex/:variable', (req, res) => {
-  const myVariable = req.params.variable;
-  const query = `SELECT * FROM ${myVariable}`;
-  // use the query to fetch data from your database
-    connection.query(query, (err, results) => {
-    if (err) throw err;
-
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
-    res.send(results);
-});
-
-
 const candidatesRoute = require("./routes/candidates");
 const projectRoute = require("./routes/project");
 const projectUser = require("./routes/user");
@@ -41,6 +23,14 @@ const dStackRoute = require("./routes/dstack");
 const projDemRoute = require("./routes/prodem");
 const recruitRoute = require("./routes/recruit");
 const proRecRoute = require("./routes/project_rec");
+
+
+
+
+app.get("/", function (req, res) {
+  res.send("Database Wiki");
+});
+
 
 app.use("/api/candidates", candidatesRoute);
 
