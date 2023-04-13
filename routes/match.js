@@ -18,8 +18,9 @@ router.post("/add", async (req, res) => {
     const result = await pool
       .request()
       .input("title", sql.VarChar, req.body.title)
+      .input("amount", sql.Decimal, req.body.amount)
       .query(
-        "INSERT INTO Profiles (Name_Profiles) VALUES (@title)"
+        "INSERT INTO Profiles (Id_Profiles, Name_Profiles) VALUES (@amount, @title)"
       );
 
     res.send("Expense added successfully.");
