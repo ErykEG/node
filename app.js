@@ -25,6 +25,12 @@ app.get("/", function (req, res) {
   res.send("Database Wiki");
 });
 
+app.get('/api/:variable', (req, res) => {
+  const myVariable = req.params.variable;
+  const query = `SELECT * FROM ${myVariable}`;
+  // use the query to fetch data from your database
+});
+
 app.use("/api/candidates", candidatesRoute);
 
 app.use("/api/project", projectRoute);
