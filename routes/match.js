@@ -19,7 +19,7 @@ router.post("/add", async (req, res) => {
       .request()
       .input("title", sql.VarChar, req.body.title)
       .query(
-        "INSERT INTO Profiles (title) VALUES (@title)"
+        "INSERT INTO Profiles (Name_Profiles) VALUES (@title)"
       );
 
     res.send("Expense added successfully.");
