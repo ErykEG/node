@@ -20,10 +20,7 @@ router.post("/add", async (req, res) => {
       .input("title", sql.VarChar, req.body.title)
       .input("amount", sql.Decimal, req.body.amount)
       .query(
-        "INSERT INTO [dbo].[Profiles]
-([Id_Profiles], [Name_Profiles], [Email_Profiles], [Permit_Profiles])
-VALUES (50, 'nombre', 'correo', 3)
-GO"
+        "INSERT INTO [dbo].[Profiles] ([Id_Profiles], [Name_Profiles], [Email_Profiles], [Permit_Profiles]) VALUES (50, 'nombre', 'correo', 3) GO"
       );
 
     res.send("Expense added successfully.");
