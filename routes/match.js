@@ -1,19 +1,24 @@
 const express = require("express");
 const sql = require("mssql");
 
+
+
 const router = express.Router();
 
 router.get("/gc", async (req, res) => {
   await sql.connect(process.env.DB_CONNECTION);
 
-  const result = await sql.query`SELECT COLUMN_NAME 
+  const result =
+    await sql.query`SELECT COLUMN_NAME 
     FROM INFORMATION_SCHEMA.COLUMNS 
     WHERE TABLE_NAME = 'Candidates';`;
 
   res.json(result.recordset);
 });
 
-router.post("/q1", async (req, res) => {
+
+
+router.post('/q1', async (req, res) => {
   try {
     const variable2 = req.body.variable2;
 
@@ -21,22 +26,19 @@ router.post("/q1", async (req, res) => {
 
     const pool = await sql.connect(process.env.DB_CONNECTION);
 
-    const result = await pool
-      .request()
-      .input("variable", sql.NVarChar(300), variable2)
-      .query(
-        `SELECT * FROM Candidates WHERE Name_Candidates like '%'${variable2}`
-      );
+    const result = await pool.request()
+      .input('variable', sql.NVarChar(300), variable2)
+      .query(`SELECT * FROM Candidates WHERE Name_Candidates like '%'${variable2}`);
 
-    console.log(result.recordset);
+      console.log(result.recordset);
     res.send(result.recordset);
   } catch (error) {
     console.error(error);
-    res.status(500).send("An error occurred while processing your request");
+    res.status(500).send('An error occurred while processing your request');
   }
 });
 
-router.post("/q2", async (req, res) => {
+router.post('/q2', async (req, res) => {
   try {
     const variable = req.body.variable;
 
@@ -44,20 +46,23 @@ router.post("/q2", async (req, res) => {
 
     const pool = await sql.connect(process.env.DB_CONNECTION);
 
-    const result = await pool
-      .request()
-      .input("variable", sql.NVarChar(100), variable)
+    const result = await pool.request()
+      .input('variable', sql.NVarChar(100), variable)
       .query(`SELECT DISTINCT ${variable} FROM Candidates`);
 
     res.send(result.recordset);
   } catch (error) {
     console.error(error);
-    res.status(500).send("An error occurred while processing your request");
+    res.status(500).send('An error occurred while processing your request');
   }
 });
 
+
+
+
 router.post("/add", async (req, res) => {
   try {
+
     const pool = await sql.connect(process.env.DB_CONNECTION);
 
     const result = await pool
@@ -67,7 +72,7 @@ router.post("/add", async (req, res) => {
       .query(
         "INSERT INTO [dbo].[Profiles] ([Id_Profiles], [Name_Profiles], [Email_Profiles], [Permit_Profiles]) VALUES (@amount, @title, 'correo', 3)"
       );
-    console.log(result);
+console.log(result)
     res.send("Expense added successfully.");
   } catch (err) {
     console.error(err);
