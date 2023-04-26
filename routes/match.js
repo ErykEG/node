@@ -57,6 +57,25 @@ router.post('/q2', async (req, res) => {
   }
 });
 
+router.post('/q3', async (req, res) => {
+  try {
+    const variable3 = req.body.variable3;
+
+    console.log(variable3);
+
+    const pool = await sql.connect(process.env.DB_CONNECTION);
+
+    const result = await pool.request()
+      .input('variable', sql.NVarChar(100), variable3)
+      .query(`SELECT DISTINCT Name_Projects_Short FROM Projects_Short WHERE Email_Creator like '${variable3}'`);
+
+    res.send(result.recordset);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('An error occurred while processing your request');
+  }
+});
+
 
 
 
