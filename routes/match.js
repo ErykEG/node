@@ -78,6 +78,26 @@ router.post('/q3', async (req, res) => {
 
 
 
+router.post("/q4", async (req, res) => {
+  try {
+
+    const pool = await sql.connect(process.env.DB_CONNECTION);
+
+    const result = await pool
+      .request()
+      .input("idProj", sql.Integer, req.body.idProj)
+      .input("idCand", sql.Integer, req.body.idCand)
+      .query(
+        "INSERT INTO [dbo].[Candidates_Projects] ([Id_Projects_Short], [Id_Candidates]) VALUES (@idProj, idCand)"
+      );
+console.log(result)
+    res.send("Expense added successfully.");
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Server error");
+  }
+});
+
 
 router.post("/add", async (req, res) => {
   try {
