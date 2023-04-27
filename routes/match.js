@@ -77,7 +77,6 @@ router.post('/q3', async (req, res) => {
 });
 
 
-
 router.post("/q4", async (req, res) => {
   try {
 
@@ -88,7 +87,7 @@ router.post("/q4", async (req, res) => {
       .input("idProj", sql.Decimal, req.body.idProj)
       .input("idCand", sql.Decimal, req.body.idCand)
       .query(
-        "INSERT INTO [dbo].[Candidates_Projects] ([Id_Projects_Short], [Id_Candidates]) VALUES (@idProj, idCand)"
+        "INSERT INTO [dbo].[Candidates_Projects] ([Id_Projects_Short], [Id_Candidates]) VALUES (@idProj, @idCand)"
       );
 console.log(result)
     res.send("Expense added successfully.");
