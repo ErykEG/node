@@ -85,8 +85,8 @@ router.post("/q4", async (req, res) => {
 
     const result = await pool
       .request()
-      .input("idProj", sql.Integer, req.body.idProj)
-      .input("idCand", sql.Integer, req.body.idCand)
+      .input("idProj", sql.Decimal, req.body.idProj)
+      .input("idCand", sql.Decimal, req.body.idCand)
       .query(
         "INSERT INTO [dbo].[Candidates_Projects] ([Id_Projects_Short], [Id_Candidates]) VALUES (@idProj, idCand)"
       );
