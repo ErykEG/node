@@ -98,6 +98,26 @@ console.log(result)
 });
 
 
+router.post("/q5", async (req, res) => {
+  try {
+
+    const pool = await sql.connect(process.env.DB_CONNECTION);
+
+    const result = await pool
+      .request()
+      .input("idProj", sql.Decimal, req.body.idProj)
+      .input("idCand", sql.Decimal, req.body.idCand)
+      .query(
+        "UPDATE Candidates SET Is_Assigned = 'ASSIGNED' WHERE Id_Candidates = @idCand"
+      );
+console.log(result)
+    res.send("Expense added successfully.");
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Server error");
+  }
+});
+
 
 
 
