@@ -1,218 +1,186 @@
-const express = require("express");
-const sql = require("mssql");
+import React from "react";
+import { useAuth0 } from "@auth0/auth0-react";
+import { useState, useEffect } from "react";
+import Slider from "react-slick";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
+import "../Components/Styles/Proyect.css";
+import { NextArrow, PrevArrow } from "../Components/Styles/arrows.js";
+import { useNavigate, Link } from "react-router-dom";
+import axios from "axios";
+import Modal from "react-modal";
+
+function Proyect() {
+  const [projects, setRecordset4] = useState([]);
+  const [cand, setRecordset5] = useState([]);
+
+  const { user } = useAuth0();
+
+  const [isAdmin, setIsAdmin] = useState(true);
+
+  useEffect(() => {
+    const userRoles = user?.[`${process.env.REACT_APP_AUTH0_NAMESPACE}`] ?? [];
+    console.log(`URL: ${process.env.REACT_APP_AUTH0_NAMESPACE}`);
+    setIsAdmin(      userRoles.includes("Super-Manager") || userRoles.includes("Manager"));
+    callData();
+  }, [user]);
 
 
-
-const router = express.Router();
-
-router.get("/gc", async (req, res) => {
-  await sql.connect(process.env.DB_CONNECTION);
-
-  const result =
-    await sql.query`SELECT COLUMN_NAME 
-    FROM INFORMATION_SCHEMA.COLUMNS 
-    WHERE TABLE_NAME = 'Candidates';`;
-
-  res.json(result.recordset);
-});
-
-
-
-router.post('/q1', async (req, res) => {
-  try {
-    const variable2 = req.body.variable2;
-
-    console.log(variable2);
-
-    const pool = await sql.connect(process.env.DB_CONNECTION);
-
-    const result = await pool.request()
-      .input('variable', sql.NVarChar(300), variable2)
-      .query(`SELECT * FROM Candidates WHERE Name_Candidates like '%'${variable2}`);
-
-      console.log(result.recordset);
-    res.send(result.recordset);
-  } catch (error) {
-    console.error(error);
-    res.status(500).send('An error occurred while processing your request');
+  function callData(){
+    getData4();
   }
-});
-
-router.post('/q2', async (req, res) => {
-  try {
-    const variable = req.body.variable;
-
-    console.log(variable);
-
-    const pool = await sql.connect(process.env.DB_CONNECTION);
-
-    const result = await pool.request()
-      .input('variable', sql.NVarChar(100), variable)
-      .query(`SELECT DISTINCT ${variable} FROM Candidates`);
-
-    res.send(result.recordset);
-  } catch (error) {
-    console.error(error);
-    res.status(500).send('An error occurred while processing your request');
-  }
-});
-
-router.post('/q3', async (req, res) => {
-  try {
-    const variable3 = req.body.variable3;
-
-    console.log(variable3);
-
-    const pool = await sql.connect(process.env.DB_CONNECTION);
-
-    const result = await pool.request()
-      .input('variable', sql.NVarChar(100), variable3)
-      .query(`SELECT DISTINCT Id_Projects_Short, Name_Projects_Short FROM Projects_Short WHERE Email_Creator like '${variable3}'`);
-
-    res.send(result.recordset);
-  } catch (error) {
-    console.error(error);
-    res.status(500).send('An error occurred while processing your request');
-  }
-});
 
 
-router.post('/q6', async (req, res) => {
-  try {
-    const v6 = req.body.v6;
+  const carouselSettings = {
+    dots: false,
+    infinite: true,
+    speed: 500,
+    slidesToShow: 1,
+    slidesToScroll: 1,
+    nextArrow: <NextArrow style={{ paddingRight: "20px" }} />, 
+    prevArrow: <PrevArrow style={{ paddingLeft: "20px" }} />, 
+    centerMode: true, 
+    centerPadding: "20%",
+ 
+  };
 
-    console.log(v6);
-
-    const pool = await sql.connect(process.env.DB_CONNECTION);
-
-    const result = await pool.request()
-      .input('variable', sql.NVarChar(100), v6)
-      .query(`SELECT * FROM Projects_Short WHERE Email_Creator like '${v6}'`);
-
-    res.send(result.recordset);
-  } catch (error) {
-    console.error(error);
-    res.status(500).send('An error occurred while processing your request');
-  }
-});
-
-
-
-router.post('/q7', async (req, res) => {
-  try {
-    const v7 = req.body.v7;
-
-    console.log(v7);
-
-    const pool = await sql.connect(process.env.DB_CONNECTION);
-
-    const result = await pool.request()
-      .input('variable', sql.NVarChar(100), v7)
-      .query(`SELECT DISTINCT C.Id_Candidates, C.Name_Candidates FROM Candidates C JOIN Candidates_Projects CP ON C.Id_Candidates = CP.Id_Candidates WHERE CP.Id_Projects_Short = ${v7}`);
-
-    res.send(result.recordset);
-  } catch (error) {
-    console.error(error);
-    res.status(500).send('An error occurred while processing your request');
-  }
-});
-
-
-router.post("/q8", async (req, res) => {
-  try {
-
-    const pool = await sql.connect(process.env.DB_CONNECTION);
-
-    const result = await pool
-      .request()
-      .input("idCand", sql.Decimal, req.body.idCand)
-      .query(`
-        BEGIN TRAN;
-          DELETE FROM [dbo].[Candidates_Projects] WHERE Id_Candidates = @idCand;
-          UPDATE [dbo].[Candidates] SET [Is_Assigned] = 'UNASSIGNED' WHERE Id_Candidates = @idCand;
-        COMMIT TRAN;
-      `);
-console.log(result)
-    res.send("Expense added successfully.");
-  } catch (err) {
-    console.error(err);
-    res.status(500).send("Server error");
-  }
-});
-
-
-
-
-router.post("/q4", async (req, res) => {
-  try {
-
-    const pool = await sql.connect(process.env.DB_CONNECTION);
-
-    const result = await pool
-      .request()
-      .input("idProj", sql.Decimal, req.body.idProj)
-      .input("idCand", sql.Decimal, req.body.idCand)
-      .query(
-        "INSERT INTO [dbo].[Candidates_Projects] ([Id_Projects_Short], [Id_Candidates]) VALUES (@idProj, @idCand)"
+  const getData4 = async () => {
+    let v6 = "pp";
+    console.log(isAdmin);
+    if (isAdmin) {
+      v6 = "%";
+    } else {
+      v6 = user.email;
+    }
+    console.log("Log Num 4: " + v6);
+    try {
+      const response = await axios.post(
+        "https://edbapi.azurewebsites.net//api/matches/q6",
+        { v6 }
       );
-console.log(result)
-    res.send("Expense added successfully.");
-  } catch (err) {
-    console.error(err);
-    res.status(500).send("Server error");
+      setRecordset4(response.data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+
+  const [modalData, setModalData] = useState({ isOpen: false, id: null });
+  const [varseven, setVS] = useState(0);
+  const handleOpenModal = async (id) => {
+    console.log(id);
+    setVS(id);
+    getData5(id);
+    setModalData({ isOpen: true, id: id });
+  };
+
+
+  const handleCloseModal = () => {
+    setModalData({ ...modalData, isOpen: false });
+  };
+
+  function delCand(){
+    const expenseData = {
+      idCand: candData.id,
+    };
+    axios
+    .post("https://edbapi.azurewebsites.net//api/matches/q8", expenseData)
+    .then(function (response) {
+      console.log(response);
+      //props.onSaveExpenseData();
+    });
+    handleCloseModal();
   }
-});
 
-
-router.post("/q5", async (req, res) => {
-  try {
-
-    const pool = await sql.connect(process.env.DB_CONNECTION);
-
-    const result = await pool
-      .request()
-      .input("idProj", sql.Decimal, req.body.idProj)
-      .input("idCand", sql.Decimal, req.body.idCand)
-      .query(
-        "UPDATE Candidates SET Is_Assigned = 'ASSIGNED' WHERE Id_Candidates = @idCand"
+  const getData5 = async (id) => {
+    let v7 = id.toString();
+    try {
+      const response = await axios.post(
+        "https://edbapi.azurewebsites.net//api/matches/q7",
+        { v7 }
       );
-console.log(result)
-    res.send("Expense added successfully.");
-  } catch (err) {
-    console.error(err);
-    res.status(500).send("Server error");
+      setRecordset5(response.data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+
+  const [candData, setCD] = useState({ id: null, name: "" });
+  function borrarCand(id, name){
+    setCD({ id: id, name: name });
   }
-});
 
+  return (
+    <div className="proyect-panel">
+      {isAdmin ? (
+        <div>
+          <h1 className="project-title">My Projects</h1>
+          <div className="carousel-box">
+            <Slider {...carouselSettings}>
+              {projects.map((project, index) => (
+                <div key={index}>
+                  <div className="project-card">
+                    <h3>{project.Name_Projects_Short}</h3>
+                    <p>{project.Job_Description}</p>
+                    <button
+                        className="add-project"
+                        onClick={() => handleOpenModal(project.Id_Projects_Short)}
+                      >
+                        View Candidates
+                      </button>
+                  </div>
+                </div>
+              ))}
+            </Slider>
+          </div>
+          <Modal isOpen={modalData.isOpen} style={{ color: "black" }}>
+          <div style={{ marginLeft: "5%" }}>
+            <h2>Hola</h2>
+            <h6>Project Id: {modalData.id}</h6>
+            <div style={{ maxHeight: "300px", overflowY: "auto" }}>
+              <table style={{ width: "100%" }}>
+                <tbody>
+                {cand.map((res) => (
+                    <tr>
+                      <td style={{ padding: "10px", alignItems: "center" }}>
+                        <button
+                          onClick={() => borrarCand(res.Id_Candidates, res.Name_Candidates)}
+                          style={{ textAlign: "center" }}
+                        >
+                          {res.Name_Candidates}
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+              <h6>Candidate Selected: {candData.name}</h6>
+            </div>
+            <div
+              style={{
+                marginTop: "10%",
+                marginLeft: "15%",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <button onClick={handleCloseModal}>Cancel</button>
+              <button onClick={()=>delCand()}>Delete</button>
+            </div>
+          </div>
+        </Modal>
+        </div>
+      ) : (
+        <div className="normal-settings" style={{ height: "100%" }}>
+          <h3>Settings</h3>
+          <button>Configuracion de la cuenta</button>
+          <button>Preferencias del usuario</button>
+        </div>
+      )}
+    </div>
+  );
+}
 
-
-
-router.post("/add", async (req, res) => {
-  try {
-
-    const pool = await sql.connect(process.env.DB_CONNECTION);
-
-    const result = await pool
-      .request()
-      .input("title", sql.VarChar, req.body.title)
-      .input("amount", sql.Decimal, req.body.amount)
-      .query(
-        "INSERT INTO [dbo].[Profiles] ([Id_Profiles], [Name_Profiles], [Email_Profiles], [Permit_Profiles]) VALUES (@amount, @title, 'correo', 3)"
-      );
-console.log(result)
-    res.send("Expense added successfully.");
-  } catch (err) {
-    console.error(err);
-    res.status(500).send("Server error");
-  }
-});
-
-router.get("/test", (req, res) => {
-  res.json({ test: "test" });
-});
-
-router.post("/test", (req, res) => {
-  res.json({ test: "test" });
-});
-
-module.exports = router;
+export default Proyect;
