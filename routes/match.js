@@ -108,7 +108,7 @@ router.post('/q7', async (req, res) => {
 
     const result = await pool.request()
       .input('variable', sql.NVarChar(100), v7)
-      .query(`SELECT * FROM Candidates C JOIN Candidates_Projects CP ON C.Id_Candidates = CP.Id_Candidates JOIN Projects_Short PS ON CP.Id_Projects_Short = PS.Id_Projects_Short WHERE PS.Id_Projects_Short = ${v7}`);
+      .query(`SELECT * FROM Candidates C JOIN Candidates_Projects CP ON C.Id_Candidates = CP.Id_Candidates WHERE CP.Id_Projects_Short = '${v7}'`);
 
     res.send(result.recordset);
   } catch (error) {
