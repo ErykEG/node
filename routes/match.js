@@ -87,7 +87,7 @@ router.post('/q6', async (req, res) => {
 
     const result = await pool.request()
       .input('variable', sql.NVarChar(100), v6)
-      .query(`SELECT * FROM Projects_Shorts WHERE Email_Creator like '${v6}'`);
+      .query(`SELECT * FROM Projects_Short WHERE Email_Creator like '${v6}'`);
 
     res.send(result.recordset);
   } catch (error) {
