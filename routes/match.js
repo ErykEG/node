@@ -97,6 +97,28 @@ router.post('/q6', async (req, res) => {
 });
 
 
+
+router.post('/q7', async (req, res) => {
+  try {
+    const v7 = req.body.v7;
+
+    console.log(v7);
+
+    const pool = await sql.connect(process.env.DB_CONNECTION);
+
+    const result = await pool.request()
+      .input('variable', sql.NVarChar(100), v7)
+      .query(`SELECT * FROM Candidates C JOIN Candidates_Projects CP ON C.Id_Candidates = CP.Id_Candidates JOIN Projects_Short PS ON CP.Id_Projects_Short = PS.Id_Projects_Short WHERE PS.Id_Projects_Short = ${v7}`);
+
+    res.send(result.recordset);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('An error occurred while processing your request');
+  }
+});
+
+
+
 router.post("/q4", async (req, res) => {
   try {
 
