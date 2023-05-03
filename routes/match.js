@@ -118,6 +118,27 @@ router.post('/q7', async (req, res) => {
 });
 
 
+router.post("/q8", async (req, res) => {
+  try {
+
+    const pool = await sql.connect(process.env.DB_CONNECTION);
+
+    const result = await pool
+      .request()
+      .input("idCand", sql.Decimal, req.body.idCand)
+      .query(`
+        BEGIN TRAN;
+          DELETE FROM [dbo].[Candidates_Projects] WHERE Id_Candidates = @idCand;
+          UPDATE [dbo].[Candidates] SET [Is_Assigned] = 'UNASSIGNED' WHERE Id_Candidates = @idCand;
+        COMMIT TRAN;
+      `);
+console.log(result)
+    res.send("Expense added successfully.");
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Server error");
+  }
+});
 
 
 
